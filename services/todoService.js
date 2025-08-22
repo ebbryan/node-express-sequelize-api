@@ -5,7 +5,7 @@ async function getAllTodos() {
 }
 
 async function getTodoByTitle(title) {
-  return await Todo.findOne({ where: { title } });
+  return await Todo.findOne({ where: { title: title } });
 }
 
 async function createTodo(data) {
