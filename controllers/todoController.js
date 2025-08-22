@@ -13,6 +13,15 @@ async function getTodos(req, res) {
 async function createTodo(req, res) {
   try {
     const { title, status } = req.body;
+    const existingTodo = todoService.getTodoByTitle(title);
+
+    if (existingTodo) {
+      return res.status(400).json({
+        message: "Todo with this title already exists",
+        success: false,
+      });
+    }
+
     const todo = await todoService.createTodo({ title, status });
     res.status(201).json({ data: todo, success: true });
   } catch (err) {

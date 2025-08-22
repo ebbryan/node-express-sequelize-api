@@ -1,4 +1,4 @@
-# Todo API
+# Node, Express, Sequelize API
 
 A simple RESTful API for managing todo items, built with Node.js, Express, Sequelize, and PostgreSQL.
 

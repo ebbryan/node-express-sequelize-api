@@ -4,6 +4,10 @@ async function getAllTodos() {
   return await Todo.findAll();
 }
 
+async function getTodoByTitle(title) {
+  return await Todo.findOne({ where: { title } });
+}
+
 async function createTodo(data) {
   return await Todo.create(data);
 }
@@ -16,4 +20,10 @@ async function getTodoById(id) {
   return await Todo.findByPk(id);
 }
 
-module.exports = { getAllTodos, createTodo, updateTodo, getTodoById };
+module.exports = {
+  getAllTodos,
+  createTodo,
+  updateTodo,
+  getTodoById,
+  getTodoByTitle,
+};
