@@ -3,12 +3,14 @@ const cors = require("cors");
 const express = require("express");
 const sequelize = require("./config/sequelize.js");
 const todoRoutes = require("./src/todo/todo.routes.js");
+const roleRoutes = require("./src/role/role.routes.js");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 app.use("/todos", todoRoutes);
+app.use("/roles", roleRoutes);
 
 // Middleware to handle errors
 app.use((err, req, res, next) => {
