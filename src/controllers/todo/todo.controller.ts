@@ -26,7 +26,21 @@ async function createTodo(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const todo = await todoService.createTodo({ title, status });
+    const validStatuses = [
+      "pending",
+      "in_progress",
+      "completed",
+      "archived",
+    ] as const;
+
+    const validatedStatus = validStatuses.includes(status as any)
+      ? (status as "pending" | "in_progress" | "completed" | "archived")
+      : "pending";
+
+    const todo = await todoService.createTodo({
+      title,
+      status: validatedStatus,
+    });
     res.status(201).json({ data: todo, success: true });
   } catch (err) {
     console.error(err);
