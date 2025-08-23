@@ -1,122 +1,286 @@
-# Node, Express, Sequelize API
+# Node.js Express Sequelize Todo API
 
-A simple RESTful API for managing todo items, built with Node.js, Express, Sequelize, and PostgreSQL.
+A robust and scalable RESTful API for managing todo items, built with Node.js, Express.js, Sequelize ORM, and PostgreSQL. This API follows clean architecture principles with separation of concerns and is designed for easy maintenance and future expansion.
 
-## Features
+## 🚀 Features
 
-- Create, read, update, and soft-delete todos
-- UUID-based IDs
-- Status field with enum values (`pending`, `in_progress`, `completed`, `archived`)
-- Soft delete by patching status to `archived`
-- Environment-based configuration
+- **CRUD Operations**: Full Create, Read, Update, and Soft Delete functionality
+- **UUID Identifiers**: Secure UUID-based primary keys
+- **Status Management**: Comprehensive status system with `pending`, `in_progress`, `completed`, and `archived` states
+- **Soft Delete**: Archive todos instead of permanent deletion
+- **Input Validation**: Built-in validation for duplicate titles
+- **Error Handling**: Comprehensive error handling with appropriate HTTP status codes
+- **CORS Enabled**: Ready for cross-origin requests
+- **Environment Configuration**: Easy configuration through environment variables
 
-## Getting Started
+## 📦 Tech Stack
+
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **ORM**: Sequelize
+- **Database**: PostgreSQL
+- **Environment**: dotenv for configuration
+- **Development**: Nodemon for hot reloading
+
+## 🏗️ Project Structure
+
+```
+node-express-sequelize-api/
+├── config/
+│   └── sequelize.js          # Database configuration
+├── src/
+│   └── todo/                 # Todo module
+│       ├── todo.model.js     # Sequelize model definition
+│       ├── todo.service.js   # Business logic layer
+│       ├── todo.controller.js # HTTP request handlers
+│       └── todo.routes.js    # Route definitions
+├── app.js                    # Main application entry point
+├── package.json              # Dependencies and scripts
+├── .env                      # Environment variables (create this)
+└── README.md                 # This file
+```
+
+## 📋 API Endpoints
+
+### Todo Management
+
+#### Get All Todos
+- **Endpoint**: `GET /todos/get`
+- **Description**: Retrieve all active todos (excluding archived items)
+- **Response**: 
+  ```json
+  {
+    "data": [
+      {
+        "id": "uuid",
+        "title": "string",
+        "status": "pending|in_progress|completed|archived",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      }
+    ],
+    "success": true
+  }
+  ```
+
+#### Create Todo
+- **Endpoint**: `POST /todos/create`
+- **Description**: Create a new todo item
+- **Request Body**:
+  ```json
+  {
+    "title": "Sample Todo",
+    "status": "pending"  // Optional, defaults to "pending"
+  }
+  ```
+- **Validation**: Prevents duplicate titles
+- **Response**: Returns the created todo with success status
+
+#### Update Todo
+- **Endpoint**: `PATCH /todos/update/:id`
+- **Description**: Update an existing todo by ID
+- **Parameters**: `id` (UUID) - The todo identifier
+- **Request Body**:
+  ```json
+  {
+    "title": "Updated Title",  // Optional
+    "status": "completed"      // Optional
+  }
+  ```
+- **Response**: Returns the updated todo
+
+#### Archive Todo (Soft Delete)
+- **Endpoint**: `PATCH /todos/:id/archive`
+- **Description**: Archive a todo (soft delete by setting status to archived)
+- **Parameters**: `id` (UUID) - The todo identifier
+- **Response**: Returns the archived todo
+
+## 🛠️ Installation & Setup
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/)
-- [PostgreSQL](https://www.postgresql.org/)
-- [Git](https://git-scm.com/)
+- Node.js (v14 or higher)
+- PostgreSQL (v12 or higher)
+- npm or yarn package manager
 
-### Installation
+### Step-by-Step Setup
 
-1. **Clone the repository:**
-
-   ```sh
-   git clone git@github.com:ebbryan/todo-api.git
-   cd todo-api
+1. **Clone and Navigate**
+   ```bash
+   git clone <your-repo-url>
+   cd node-express-sequelize-api
    ```
 
-2. **Install dependencies:**
-
-   ```sh
+2. **Install Dependencies**
+   ```bash
    npm install
    ```
 
-3. **Configure environment variables:**
-   Create a `.env` file in the root directory:
-
+3. **Database Setup**
+   ```bash
+   # Create PostgreSQL database
+   createdb todo-db
    ```
+
+4. **Environment Configuration**
+   Create a `.env` file in the root directory:
+   ```env
    DB_NAME=todo-db
    DB_USER=postgres
-   DB_PASS=admin
+   DB_PASS=your_password
    DB_HOST=localhost
    DB_PORT=5432
    SERVER_PORT=3000
    NODE_ENV=development
    ```
 
-4. **Start the server:**
-   ```sh
+5. **Start the Application**
+   ```bash
+   # Development mode with hot reload
    npm run dev
+   
+   # Or for production
+   npm start
    ```
 
-## API Endpoints
+## 🧪 Testing the API
 
-### Todos
+You can test the API using tools like curl, Postman, or Thunder Client:
 
-- `GET /todos`  
-  Retrieve all todos.
+```bash
+# Get all todos
+curl http://localhost:3000/todos/get
 
-- `POST /todos`  
-  Create a new todo.  
-  **Body:**
+# Create a new todo
+curl -X POST http://localhost:3000/todos/create \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Learn Node.js", "status": "pending"}'
 
-  ```json
-  {
-    "title": "Sample Todo",
-    "status": "pending"
-  }
-  ```
+# Update a todo
+curl -X PATCH http://localhost:3000/todos/update/123e4567-e89b-12d3-a456-426614174000 \
+  -H "Content-Type: application/json" \
+  -d '{"status": "completed"}'
 
-- `PATCH /todos/:id`  
-  Update a todo by ID.  
-  **Body:**
-
-  ```json
-  {
-    "title": "Updated Title",
-    "status": "completed"
-  }
-  ```
-
-- `PATCH /todos/:id/archive`  
-  Soft delete a todo (set status to `archived`).
-
-## Project Structure
-
-```
-todo-api/
-├── controllers/
-├── models/
-├── routes/
-├── services/
-├── app.js
-├── sequelize.js
-├── .env
-├── .gitignore
-└── package.json
+# Archive a todo
+curl -X PATCH http://localhost:3000/todos/123e4567-e89b-12d3-a456-426614174000/archive
 ```
 
-## License
+## 🔧 Development
 
-MIT License
+### Available Scripts
 
-Copyright (c) 2025 Earl Bryan
+- `npm run dev` - Start development server with nodemon
+- `npm start` - Start production server
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+### Code Style & Best Practices
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This project follows these architectural patterns:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+1. **Separation of Concerns**: 
+   - Routes handle HTTP requests
+   - Controllers manage request/response logic
+   - Services contain business logic
+   - Models define data structure
+
+2. **Error Handling**: Comprehensive try-catch blocks with appropriate HTTP status codes
+
+3. **Validation**: Input validation at both service and controller levels
+
+## 🚀 Deployment
+
+### Production Deployment
+
+1. **Environment Setup**
+   ```bash
+   # Set production environment
+   NODE_ENV=production
+   ```
+
+2. **Database Configuration**
+   - Update `.env` with production database credentials
+   - Ensure PostgreSQL is running in production mode
+
+3. **Start Application**
+   ```bash
+   npm start
+   ```
+
+### Docker Deployment (Future Ready)
+
+```dockerfile
+# Example Dockerfile for future implementation
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --only=production
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+## 📈 Scalability Considerations
+
+### Current Architecture Benefits
+
+- **Modular Structure**: Easy to add new features as separate modules
+- **Service Layer**: Business logic is separated from HTTP handling
+- **ORM Abstraction**: Database-agnostic design through Sequelize
+
+### Future Enhancements
+
+1. **Authentication**: JWT-based authentication system
+2. **User Management**: Multi-user support with role-based access
+3. **Pagination**: Add pagination for large todo lists
+4. **Search & Filter**: Advanced filtering and search capabilities
+5. **WebSocket Support**: Real-time updates
+6. **Testing Suite**: Unit and integration tests
+7. **API Documentation**: Swagger/OpenAPI documentation
+8. **Rate Limiting**: Request rate limiting
+9. **Logging**: Enhanced logging with Winston/Morgan
+10. **Monitoring**: Health checks and performance monitoring
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+If you encounter any issues or have questions:
+
+1. Check the troubleshooting section below
+2. Review the API documentation
+3. Create an issue in the GitHub repository
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Error**
+   - Ensure PostgreSQL is running
+   - Verify database credentials in `.env`
+   - Check if database exists: `createdb todo-db`
+
+2. **Port Already in Use**
+   - Change `SERVER_PORT` in `.env`
+   - Or kill the process using the port
+
+3. **Module Not Found**
+   - Run `npm install` to install dependencies
+
+### Getting Help
+
+- Check the console logs for detailed error messages
+- Ensure all environment variables are properly set
+- Verify database migrations are applied
+
+---
+
+**Built with ❤️ using Node.js, Express, and Sequelize**
