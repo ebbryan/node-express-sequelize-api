@@ -107,7 +107,7 @@ node-express-sequelize-api/
 
 1. **Clone and Navigate**
    ```bash
-   git clone <your-repo-url>
+   git clone git@github.com:ebbryan/node-express-sequelize-api.git
    cd node-express-sequelize-api
    ```
 
