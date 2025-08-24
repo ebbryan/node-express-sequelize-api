@@ -21,7 +21,7 @@ const UserService = {
   async getAllUsers() {
     try {
       const users = await User.findAll({
-        attributes: { exclude: ["password"] },
+        attributes: { exclude: ["password", "role_id"] },
         include: [
           {
             model: Role,
@@ -39,7 +39,7 @@ const UserService = {
   async getUserById(id) {
     try {
       const user = await User.findByPk(id, {
-        attributes: { exclude: ["password"] },
+        attributes: { exclude: ["password", "role_id"] },
         include: [
           {
             model: Role,
