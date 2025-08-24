@@ -3,26 +3,21 @@ const { User } = require("./user.model");
 const { Role } = require("../role/role.model");
 
 const UserService = {
-  // Create a new user with password hashing
   async createUser(userData) {
     try {
-      // Hash the password before saving
-      const saltRounds = 12; // High level of security
+      const saltRounds = 12;
       const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
 
       const user = await User.create({
         ...userData,
         password: hashedPassword,
       });
-
-      const userResponse = this.getUserById(user.id); // Fetch user with role info
-      return userResponse;
+      return this.getUserById(user.id);
     } catch (error) {
       throw new Error(`Error creating user: ${error.message}`);
     }
   },
 
-  // Get all users with role information
   async getAllUsers() {
     try {
       const users = await User.findAll({
@@ -41,7 +36,6 @@ const UserService = {
     }
   },
 
-  // Get user by ID with role information
   async getUserById(id) {
     try {
       const user = await User.findByPk(id, {
@@ -60,7 +54,6 @@ const UserService = {
     }
   },
 
-  // Update user
   async updateUser(id, userData) {
     try {
       const user = await User.findByPk(id);
@@ -68,22 +61,18 @@ const UserService = {
         throw new Error("User not found");
       }
 
-      // If password is being updated, hash it
       if (userData.password) {
         const saltRounds = 12;
         userData.password = await bcrypt.hash(userData.password, saltRounds);
       }
 
       await user.update(userData);
-
-      const userResponse = this.getUserById(user.id); // Fetch updated user with role info
-      return userResponse;
+      return this.getUserById(user.id);
     } catch (error) {
       throw new Error(`Error updating user: ${error.message}`);
     }
   },
 
-  // Delete user
   async deleteUser(id) {
     try {
       const user = await User.findByPk(id);
@@ -98,7 +87,6 @@ const UserService = {
     }
   },
 
-  // Verify user password
   async verifyPassword(email, password) {
     try {
       const user = await User.findOne({ where: { email } });

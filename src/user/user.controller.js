@@ -53,6 +53,21 @@ const UserController = {
       return res.status(400).json({ error: error.message });
     }
   },
+
+  async verifyPassword(req, res) {
+    try {
+      const { email, password } = req.body;
+      const isPasswordMatched = await UserService.verifyPassword(
+        email,
+        password
+      );
+      return res.status(200).json({
+        isMatch: isPasswordMatched,
+      });
+    } catch (error) {
+      return res.status(400).json({ error: error.message, success: false });
+    }
+  },
 };
 
 module.exports = UserController;
