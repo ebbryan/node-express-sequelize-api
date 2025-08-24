@@ -4,7 +4,6 @@ const { User } = require("../src/user/user.model");
 function defineAssociations() {
   Role.hasMany(User, { foreignKey: "role_id", as: "users" });
   User.belongsTo(Role, { foreignKey: "role_id", as: "role" });
-  console.log("Model associations defined successfully");
 }
 
 module.exports = { defineAssociations };

@@ -15,7 +15,8 @@ const UserService = {
         password: hashedPassword,
       });
 
-      return user;
+      const userResponse = this.getUserById(user.id); // Fetch user with role info
+      return userResponse;
     } catch (error) {
       throw new Error(`Error creating user: ${error.message}`);
     }
@@ -25,7 +26,7 @@ const UserService = {
   async getAllUsers() {
     try {
       const users = await User.findAll({
-        attributes: { exclude: ["password"] }, // Exclude password from results
+        attributes: { exclude: ["password"] },
         include: [
           {
             model: Role,
@@ -44,7 +45,7 @@ const UserService = {
   async getUserById(id) {
     try {
       const user = await User.findByPk(id, {
-        attributes: { exclude: ["password"] }, // Exclude password from results
+        attributes: { exclude: ["password"] },
         include: [
           {
             model: Role,
@@ -74,7 +75,9 @@ const UserService = {
       }
 
       await user.update(userData);
-      return user;
+
+      const userResponse = this.getUserById(user.id); // Fetch updated user with role info
+      return userResponse;
     } catch (error) {
       throw new Error(`Error updating user: ${error.message}`);
     }
