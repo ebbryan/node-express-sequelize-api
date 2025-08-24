@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { User } = require("./user.models");
+const { User } = require("./user.model");
 const { Role } = require("../role/role.model");
 
 const UserService = {

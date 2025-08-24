@@ -4,8 +4,8 @@ const UserController = {
   async createUser(req, res) {
     try {
       const userData = req.body;
-      const user = await UserService.createUser(userData);
-      return res.status(201).json(user);
+      const response = await UserService.createUser(userData);
+      return res.status(201).json({ data: response, success: true });
     } catch (error) {
       return res.status(400).json({ error: error.message });
     }
@@ -14,22 +14,22 @@ const UserController = {
   async getAllUsers(req, res) {
     try {
       const users = await UserService.getAllUsers();
-      return res.status(200).json(users);
+      return res.status(200).json({ data: users, success: true });
     } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, success: false });
     }
   },
 
   async getUserById(req, res) {
     try {
       const { id } = req.params;
-      const user = await UserService.getUserById(id);
-      if (!user) {
+      const response = await UserService.getUserById(id);
+      if (!response) {
         return res.status(404).json({ error: "User not found" });
       }
-      return res.status(200).json(user);
+      return res.status(200).json({ data: response, success: true });
     } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, success: false });
     }
   },
 
@@ -37,10 +37,10 @@ const UserController = {
     try {
       const { id } = req.params;
       const userData = req.body;
-      const user = await UserService.updateUser(id, userData);
-      return res.status(200).json(user);
+      const response = await UserService.updateUser(id, userData);
+      return res.status(200).json({ data: response, success: true });
     } catch (error) {
-      return res.status(400).json({ error: error.message });
+      return res.status(400).json({ error: error.message, success: false });
     }
   },
 

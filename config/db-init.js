@@ -2,13 +2,11 @@ const sequelize = require("./sequelize.js");
 const { defineAssociations } = require("./associations.js");
 
 function DBInit(app) {
-  // Define model associations first
-  defineAssociations();
-
   sequelize
     .authenticate()
     .then(() => {
-      console.log("Connected to the database");
+      defineAssociations();
+      console.log("Connected to the database and associations defined.");
       return sequelize.sync();
     })
     .then(() => {
