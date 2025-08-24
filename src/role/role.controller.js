@@ -37,6 +37,7 @@ async function updateRole(req, res) {
     const { id } = req.params;
     const { name } = req.body;
     const [updated] = await roleService.updateRole(id, { name });
+
     if (updated) {
       const updatedRole = await roleService.getRoleById(id);
       res.json({ data: updatedRole, success: true });

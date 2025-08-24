@@ -1,11 +1,13 @@
-import sequelize from "./sequelize.js";
+const sequelize = require("./sequelize.js");
+const { defineAssociations } = require("./associations.js");
 
-export function DBInit(app) {
+function DBInit(app) {
   sequelize
     .authenticate()
     .then(() => {
-      console.log("Connected to the database");
-      return sequelize.sync();
+      defineAssociations();
+      console.log("Connected to the database and associations defined.");
+      return sequelize.sync({ alter: true });
     })
     .then(() => {
       app.listen(process.env.SERVER_PORT, () => {
@@ -16,3 +18,5 @@ export function DBInit(app) {
       console.error("Unable to connect to the database:", err);
     });
 }
+
+module.exports = { DBInit };
