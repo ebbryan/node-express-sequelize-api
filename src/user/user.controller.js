@@ -13,8 +13,8 @@ const UserController = {
 
   async getAllUsers(req, res) {
     try {
-      const users = await UserService.getAllUsers();
-      return res.status(200).json({ data: users, success: true });
+      const response = await UserService.getAllUsers();
+      return res.status(200).json({ data: response, success: true });
     } catch (error) {
       return res.status(400).json({ error: error.message, success: false });
     }
