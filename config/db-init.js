@@ -7,7 +7,7 @@ function DBInit(app) {
     .then(() => {
       defineAssociations();
       console.log("Connected to the database and associations defined.");
-      return sequelize.sync();
+      return sequelize.sync({ alter: true });
     })
     .then(() => {
       app.listen(process.env.SERVER_PORT, () => {

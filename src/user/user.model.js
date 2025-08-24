@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../config/sequelize.js");
-const { Role } = require("../role/role.model.js");
 
 const User = sequelize.define(
   "User",
@@ -9,6 +8,11 @@ const User = sequelize.define(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+    },
+    status: {
+      type: DataTypes.ENUM("active", "in_active", "archived"),
+      allowNull: false,
+      defaultValue: "active",
     },
     first_name: {
       type: DataTypes.STRING,
