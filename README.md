@@ -1,14 +1,14 @@
-# Node.js Express Sequelize Todo API
+# Node.js Express Sequelize Todo, User, and Role API
 
-A robust and scalable RESTful API for managing todo items, built with Node.js, Express.js, Sequelize ORM, and PostgreSQL. This API follows clean architecture principles with separation of concerns and is designed for easy maintenance and future expansion.
+A robust and scalable RESTful API for managing todo items, users, and roles, built with Node.js, Express.js, Sequelize ORM, and PostgreSQL. This API follows clean architecture principles with separation of concerns and is designed for easy maintenance and future expansion.
 
 ## 🚀 Features
 
-- **CRUD Operations**: Full Create, Read, Update, and Soft Delete functionality
+- **CRUD Operations**: Full Create, Read, Update, and Soft Delete functionality for todos, users, and roles
 - **UUID Identifiers**: Secure UUID-based primary keys
-- **Status Management**: Comprehensive status system with `pending`, `in_progress`, `completed`, and `archived` states
+- **Status Management**: Comprehensive status system with `pending`, `in_progress`, `completed`, and `archived` states for todos
 - **Soft Delete**: Archive todos instead of permanent deletion
-- **Input Validation**: Built-in validation for duplicate titles
+- **Input Validation**: Built-in validation for duplicate titles in todos
 - **Error Handling**: Comprehensive error handling with appropriate HTTP status codes
 - **CORS Enabled**: Ready for cross-origin requests
 - **Environment Configuration**: Easy configuration through environment variables
@@ -27,16 +27,30 @@ A robust and scalable RESTful API for managing todo items, built with Node.js, E
 ```
 node-express-sequelize-api/
 ├── config/
+│   ├── associations.js       # Associations between models
+│   ├── db-init.js            # Database initialization
 │   └── sequelize.js          # Database configuration
 ├── src/
-│   └── todo/                 # Todo module
-│       ├── todo.model.js     # Sequelize model definition
-│       ├── todo.service.js   # Business logic layer
-│       ├── todo.controller.js # HTTP request handlers
-│       └── todo.routes.js    # Route definitions
+│   ├── role/                 # Role module
+│   │   ├── role.controller.js # Role business logic
+│   │   ├── role.model.js      # Role Sequelize model definition
+│   │   ├── role.routes.js     # Role route definitions
+│   │   └── role.service.js    # Role service layer
+│   ├── todo/                 # Todo module
+│   │   ├── todo.model.js     # Todo Sequelize model definition
+│   │   ├── todo.service.js   # Todo business logic
+│   │   ├── todo.controller.js # Todo HTTP request handlers
+│   │   └── todo.routes.js    # Todo route definitions
+│   ├── user/                 # User module
+│   │   ├── user.controller.js # User business logic
+│   │   ├── user.models.js     # User Sequelize model definition
+│   │   ├── user.routes.js     # User route definitions
+│   │   └── user.service.js    # User service layer
 ├── app.js                    # Main application entry point
+├── middleware.js             # Custom middleware functions
 ├── package.json              # Dependencies and scripts
 ├── .env                      # Environment variables (create this)
+├── .gitignore               # Git ignore rules
 └── README.md                 # This file
 ```
 
@@ -45,9 +59,10 @@ node-express-sequelize-api/
 ### Todo Management
 
 #### Get All Todos
+
 - **Endpoint**: `GET /todos/get`
 - **Description**: Retrieve all active todos (excluding archived items)
-- **Response**: 
+- **Response**:
   ```json
   {
     "data": [
@@ -64,36 +79,148 @@ node-express-sequelize-api/
   ```
 
 #### Create Todo
+
 - **Endpoint**: `POST /todos/create`
 - **Description**: Create a new todo item
 - **Request Body**:
   ```json
   {
     "title": "Sample Todo",
-    "status": "pending"  // Optional, defaults to "pending"
+    "status": "pending" // Optional, defaults to "pending"
   }
   ```
 - **Validation**: Prevents duplicate titles
 - **Response**: Returns the created todo with success status
 
 #### Update Todo
+
 - **Endpoint**: `PATCH /todos/update/:id`
 - **Description**: Update an existing todo by ID
 - **Parameters**: `id` (UUID) - The todo identifier
 - **Request Body**:
   ```json
   {
-    "title": "Updated Title",  // Optional
-    "status": "completed"      // Optional
+    "title": "Updated Title", // Optional
+    "status": "completed" // Optional
   }
   ```
 - **Response**: Returns the updated todo
 
 #### Archive Todo (Soft Delete)
+
 - **Endpoint**: `PATCH /todos/:id/archive`
 - **Description**: Archive a todo (soft delete by setting status to archived)
 - **Parameters**: `id` (UUID) - The todo identifier
 - **Response**: Returns the archived todo
+
+### User Management
+
+#### Get All Users
+
+- **Endpoint**: `GET /users/`
+- **Description**: Retrieve all users
+- **Response**:
+  ```json
+  {
+    "data": [
+      {
+        "id": "uuid",
+        "name": "string",
+        "email": "string",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      }
+    ],
+    "success": true
+  }
+  ```
+
+#### Create User
+
+- **Endpoint**: `POST /users/create`
+- **Description**: Create a new user
+- **Request Body**:
+  ```json
+  {
+    "name": "Sample User",
+    "email": "user@example.com"
+  }
+  ```
+- **Response**: Returns the created user with success status
+
+#### Get User by ID
+
+- **Endpoint**: `GET /users/:id`
+- **Description**: Retrieve a user by ID
+- **Parameters**: `id` (UUID) - The user identifier
+- **Response**: Returns the user details
+
+#### Update User
+
+- **Endpoint**: `PATCH /users/update/:id`
+- **Description**: Update an existing user by ID
+- **Parameters**: `id` (UUID) - The user identifier
+- **Request Body**:
+  ```json
+  {
+    "name": "Updated Name", // Optional
+    "email": "updated@example.com" // Optional
+  }
+  ```
+- **Response**: Returns the updated user
+
+#### Delete User
+
+- **Endpoint**: `DELETE /users/delete/:id`
+- **Description**: Delete a user by ID
+- **Parameters**: `id` (UUID) - The user identifier
+- **Response**: Returns a success message
+
+### Role Management
+
+#### Get All Roles
+
+- **Endpoint**: `GET /roles/get`
+- **Description**: Retrieve all roles
+- **Response**:
+  ```json
+  {
+    "data": [
+      {
+        "id": "uuid",
+        "name": "string",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      }
+    ],
+    "success": true
+  }
+  ```
+
+#### Create Role
+
+- **Endpoint**: `POST /roles/create`
+- **Description**: Create a new role
+- **Request Body**:
+  ```json
+  {
+    "name": "Sample Role"
+  }
+  ```
+- **Response**: Returns the created role with success status
+
+#### Update Role
+
+- **Endpoint**: `PATCH /roles/update/:id`
+- **Description**: Update an existing role by ID
+- **Parameters**: `id` (UUID) - The role identifier
+- **Request Body**:
+  ```json
+  {
+    "name": "Updated Role" // Optional
+  }
+  ```
+- **Response**: Returns the updated role
 
 ## 🛠️ Installation & Setup
 
@@ -106,17 +233,20 @@ node-express-sequelize-api/
 ### Step-by-Step Setup
 
 1. **Clone and Navigate**
+
    ```bash
    git clone git@github.com:ebbryan/node-express-sequelize-api.git
    cd node-express-sequelize-api
    ```
 
 2. **Install Dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Database Setup**
+
    ```bash
    # Create PostgreSQL database
    createdb todo-db
@@ -124,6 +254,7 @@ node-express-sequelize-api/
 
 4. **Environment Configuration**
    Create a `.env` file in the root directory:
+
    ```env
    DB_NAME=todo-db
    DB_USER=postgres
@@ -135,10 +266,11 @@ node-express-sequelize-api/
    ```
 
 5. **Start the Application**
+
    ```bash
    # Development mode with hot reload
    npm run dev
-   
+
    # Or for production
    npm start
    ```
@@ -163,6 +295,35 @@ curl -X PATCH http://localhost:3000/todos/update/123e4567-e89b-12d3-a456-4266141
 
 # Archive a todo
 curl -X PATCH http://localhost:3000/todos/123e4567-e89b-12d3-a456-426614174000/archive
+
+# Get all users
+curl http://localhost:3000/users/
+
+# Create a new user
+curl -X POST http://localhost:3000/users/create \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Sample User", "email": "user@example.com"}'
+
+# Update a user
+curl -X PATCH http://localhost:3000/users/update/123e4567-e89b-12d3-a456-426614174000 \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Updated User"}'
+
+# Delete a user
+curl -X DELETE http://localhost:3000/users/delete/123e4567-e89b-12d3-a456-426614174000
+
+# Get all roles
+curl http://localhost:3000/roles/get
+
+# Create a new role
+curl -X POST http://localhost:3000/roles/create \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Sample Role"}'
+
+# Update a role
+curl -X PATCH http://localhost:3000/roles/update/123e4567-e89b-12d3-a456-426614174000 \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Updated Role"}'
 ```
 
 ## 🔧 Development
@@ -176,7 +337,8 @@ curl -X PATCH http://localhost:3000/todos/123e4567-e89b-12d3-a456-426614174000/a
 
 This project follows these architectural patterns:
 
-1. **Separation of Concerns**: 
+1. **Separation of Concerns**:
+
    - Routes handle HTTP requests
    - Controllers manage request/response logic
    - Services contain business logic
@@ -191,12 +353,14 @@ This project follows these architectural patterns:
 ### Production Deployment
 
 1. **Environment Setup**
+
    ```bash
    # Set production environment
    NODE_ENV=production
    ```
 
 2. **Database Configuration**
+
    - Update `.env` with production database credentials
    - Ensure PostgreSQL is running in production mode
 
@@ -229,8 +393,8 @@ CMD ["npm", "start"]
 ### Future Enhancements
 
 1. **Authentication**: JWT-based authentication system
-2. **User Management**: Multi-user support with role-based access
-3. **Pagination**: Add pagination for large todo lists
+2. **User-Role Associations**: Link users to specific roles
+3. **Pagination**: Add pagination for large datasets
 4. **Search & Filter**: Advanced filtering and search capabilities
 5. **WebSocket Support**: Real-time updates
 6. **Testing Suite**: Unit and integration tests
@@ -264,11 +428,13 @@ If you encounter any issues or have questions:
 ### Common Issues
 
 1. **Database Connection Error**
+
    - Ensure PostgreSQL is running
    - Verify database credentials in `.env`
    - Check if database exists: `createdb todo-db`
 
 2. **Port Already in Use**
+
    - Change `SERVER_PORT` in `.env`
    - Or kill the process using the port
 

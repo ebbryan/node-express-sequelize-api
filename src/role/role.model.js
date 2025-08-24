@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../config/sequelize.js");
+const { User } = require("../user/user.models.js");
 
 const Role = sequelize.define(
   "Role",
@@ -19,5 +20,11 @@ const Role = sequelize.define(
     timestamps: true,
   }
 );
+
+// Association: One Role hasMany Users
+Role.hasMany(User, {
+  foreignKey: "role_id",
+  as: "users",
+});
 
 module.exports = { Role };

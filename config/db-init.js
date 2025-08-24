@@ -1,6 +1,10 @@
-import sequelize from "./sequelize.js";
+const sequelize = require("./sequelize.js");
+const { defineAssociations } = require("./associations.js");
 
-export function DBInit(app) {
+function DBInit(app) {
+  // Define model associations first
+  defineAssociations();
+
   sequelize
     .authenticate()
     .then(() => {
@@ -16,3 +20,5 @@ export function DBInit(app) {
       console.error("Unable to connect to the database:", err);
     });
 }
+
+module.exports = { DBInit };
