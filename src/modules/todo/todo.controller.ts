@@ -1,4 +1,5 @@
 import { handleErrorType } from "../../helpers/handleErrorType";
+import { Todo } from "./todo.model";
 import todoService, { TodoRequestBodyType } from "./todo.service";
 import { Request, Response } from "express";
 
@@ -42,14 +43,16 @@ const createTodo = async (req: Request, res: Response) => {
 const updateTodo = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, status } = req.body;
-    const [updated] = await todoService.updateTodo(id, { title, status });
-    if (updated) {
-      const updatedTodo = await todoService.getTodoById(id);
-      return res.json({ data: updatedTodo, success: true });
-    } else {
+    const data: Partial<Todo> = req.body;
+
+    const isUpdated = await todoService.updateTodo(id, data);
+
+    if (!isUpdated) {
       return handleErrorType(404, res, "Todo not found");
     }
+
+    const updatedTodo = await todoService.getTodoById(id);
+    return res.json({ data: updatedTodo, success: true });
   } catch (err) {
     return handleErrorType(500, res, "Error updating todo");
   }
@@ -58,8 +61,8 @@ const updateTodo = async (req: Request, res: Response) => {
 const softDeleteTodo = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const [updated] = await todoService.updateTodo(id, { status: "archived" });
-    if (updated) {
+    const isUpdated = await todoService.updateTodo(id, { status: "archived" });
+    if (isUpdated) {
       const archivedTodo = await todoService.getTodoById(id);
       return res.json({ data: archivedTodo, success: true });
     } else {

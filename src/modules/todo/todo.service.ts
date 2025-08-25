@@ -1,5 +1,4 @@
 import { Todo } from "./todo.model";
-import { TodoTypes } from "./todo.type";
 
 export type TodoRequestBodyType = Pick<Todo, "title" | "status">;
 
@@ -16,8 +15,9 @@ class TodoService {
     return await Todo.create(data);
   }
 
-  async updateTodo(id: string, data: Partial<TodoTypes>) {
-    return await Todo.update(data, { where: { id } });
+  async updateTodo(id: string, data: Partial<Todo>) {
+    const [affectedRows] = await Todo.update(data, { where: { id } });
+    return affectedRows > 0;
   }
 
   async getTodoById(id: string) {
