@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { handleErrorType } from "../../helpers/handleErrorType";
 
-export const validateTodoUpdate = (
+export const validateTodo = (
   req: Request,
   res: Response,
   next: NextFunction
