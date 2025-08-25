@@ -1,6 +1,7 @@
-const todoService = require("./todo.service.js");
+import todoService, { TodoRequestBodyType } from "./todo.service";
+import { Request, Response } from "express";
 
-async function getTodos(req, res) {
+const getTodos = async (req: Request, res: Response) => {
   try {
     const todos = await todoService.getAllTodos();
     res.json({ data: todos, success: true });
@@ -8,14 +9,14 @@ async function getTodos(req, res) {
     console.error(err);
     res.status(500).json({ message: "Error retrieving todos", success: false });
   }
-}
+};
 
-async function createTodo(req, res) {
+const createTodo = async (req: Request, res: Response) => {
   try {
-    const { title, status } = req.body;
+    const payload: TodoRequestBodyType = req.body;
     const todos = await todoService.getAllTodos();
 
-    const isExisting = todos.some((todo) => todo.title === title);
+    const isExisting = todos.some((todo) => todo.title === payload.title);
 
     if (isExisting) {
       return res.status(400).json({
@@ -24,15 +25,15 @@ async function createTodo(req, res) {
       });
     }
 
-    const todo = await todoService.createTodo({ title, status });
+    const todo = await todoService.createTodo(payload);
     res.status(201).json({ data: todo, success: true });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error creating todo", success: false });
   }
-}
+};
 
-async function updateTodo(req, res) {
+const updateTodo = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { title, status } = req.body;
@@ -47,9 +48,9 @@ async function updateTodo(req, res) {
     console.error(err);
     res.status(500).json({ message: "Error updating todo", success: false });
   }
-}
+};
 
-async function softDeleteTodo(req, res) {
+const softDeleteTodo = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const [updated] = await todoService.updateTodo(id, { status: "archived" });
@@ -63,6 +64,6 @@ async function softDeleteTodo(req, res) {
     console.error(err);
     res.status(500).json({ message: "Error archiving todo", success: false });
   }
-}
+};
 
-module.exports = { getTodos, createTodo, updateTodo, softDeleteTodo };
+export default { getTodos, createTodo, updateTodo, softDeleteTodo };

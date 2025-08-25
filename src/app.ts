@@ -1,9 +1,6 @@
 require("dotenv").config();
 import express from "express";
 import cors from "cors";
-import todoRoutes from "./src/todo/todo.routes";
-import roleRoutes from "./src/role/role.routes";
-import userRoutes from "./src/user/user.routes";
 import CustomMiddleware from "./middleware";
 import DBInit from "./config/db-init";
 

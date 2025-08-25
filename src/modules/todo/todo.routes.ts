@@ -1,7 +1,7 @@
 import express from "express";
-import { todoController } from "./todo.controller.js";
-
+import todoController from "./todo.controller";
 const router = express.Router();
+
 router.get("/get", todoController.getTodos);
 router.post("/create", todoController.createTodo);
 router.patch("/update/:id", todoController.updateTodo);
