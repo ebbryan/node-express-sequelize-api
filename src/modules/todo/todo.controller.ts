@@ -2,6 +2,7 @@ import { handleErrorType } from "../../helpers/handleErrorType";
 import { Todo } from "./todo.model";
 import todoService, { TodoRequestBodyType } from "./todo.service";
 import { Request, Response } from "express";
+import { validateTodoUpdate } from "./todo.validator";
 
 const getTodos = async (req: Request, res: Response) => {
   try {
