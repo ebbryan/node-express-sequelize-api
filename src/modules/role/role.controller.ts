@@ -1,6 +1,7 @@
-const roleService = require("./role.service.js");
+import { Request, Response } from "express";
+import roleService, { CreateRequestBody } from "./role.service";
 
-async function getRoles(req, res) {
+const getRoles = async (req: Request, res: Response) => {
   try {
     const response = await roleService.getAllRoles();
     res.json({ data: response, success: true });
@@ -8,31 +9,31 @@ async function getRoles(req, res) {
     console.error(err);
     res.status(500).json({ message: "Error retrieving roles", success: false });
   }
-}
+};
 
-async function createRole(req, res) {
+const createRole = async (req: Request, res: Response) => {
   try {
-    const { name } = req.body;
+    const payload: CreateRequestBody = req.body;
     const roles = await roleService.getAllRoles();
 
-    const isExisting = roles.some((role) => role.title === title);
+    const isExisting = roles.some((role) => role.name === payload.name);
 
     if (isExisting) {
       return res.status(400).json({
-        message: `${title} role already exists`,
+        message: `${payload.name} role already exists`,
         success: false,
       });
     }
 
-    const response = await roleService.createRole({ name });
+    const response = await roleService.createRole(payload);
     res.status(201).json({ data: response, success: true });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error creating Role", success: false });
   }
-}
+};
 
-async function updateRole(req, res) {
+async function updateRole(req: Request, res: Response) {
   try {
     const { id } = req.params;
     const { name } = req.body;
@@ -66,4 +67,4 @@ async function updateRole(req, res) {
 //   }
 // }
 
-module.exports = { getRoles, createRole, updateRole };
+export default { getRoles, createRole, updateRole };

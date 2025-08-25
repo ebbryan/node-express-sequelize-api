@@ -1,4 +1,4 @@
-import sequelize from "./sequelize";
+import { sequelize } from "./sequelize";
 import { defineAssociations } from "./associations";
 import { Express } from "express";
 
@@ -15,7 +15,7 @@ const DBInit = (app: Express) => {
         console.log(`Server is running on port ${process.env.SERVER_PORT}`);
       });
     })
-    .catch((err) => {
+    .catch((err: Error) => {
       console.error("Unable to connect to the database:", err);
     });
 };

@@ -9,6 +9,6 @@ export const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST as string,
     dialect: "postgres",
-    port: process.env.DB_PORT as number | undefined,
+    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : undefined,
   }
 );
