@@ -1,6 +1,6 @@
-# Node.js Express Sequelize Todo, User, and Role API
+# Node.js Express TypeScript Sequelize Todo, User, and Role API
 
-A robust and scalable RESTful API for managing todo items, users, and roles, built with Node.js, Express.js, Sequelize ORM, and PostgreSQL. This API follows clean architecture principles with separation of concerns and is designed for easy maintenance and future expansion.
+A robust and scalable RESTful API for managing todo items, users, and roles, built with Node.js, Express.js, TypeScript, Sequelize ORM, and PostgreSQL. This API follows clean architecture principles with separation of concerns and is designed for easy maintenance and future expansion.
 
 ## 🚀 Features
 
@@ -16,6 +16,7 @@ A robust and scalable RESTful API for managing todo items, users, and roles, bui
 ## 📦 Tech Stack
 
 - **Runtime**: Node.js
+- **Language**: TypeScript
 - **Framework**: Express.js
 - **ORM**: Sequelize
 - **Database**: PostgreSQL
@@ -26,32 +27,46 @@ A robust and scalable RESTful API for managing todo items, users, and roles, bui
 
 ```
 node-express-sequelize-api/
-├── config/
-│   ├── associations.js       # Associations between models
-│   ├── db-init.js            # Database initialization
-│   └── sequelize.js          # Database configuration
 ├── src/
-│   ├── role/                 # Role module
-│   │   ├── role.controller.js # Role business logic
-│   │   ├── role.model.js      # Role Sequelize model definition
-│   │   ├── role.routes.js     # Role route definitions
-│   │   └── role.service.js    # Role service layer
-│   ├── todo/                 # Todo module
-│   │   ├── todo.model.js     # Todo Sequelize model definition
-│   │   ├── todo.service.js   # Todo business logic
-│   │   ├── todo.controller.js # Todo HTTP request handlers
-│   │   └── todo.routes.js    # Todo route definitions
-│   ├── user/                 # User module
-│   │   ├── user.controller.js # User business logic
-│   │   ├── user.models.js     # User Sequelize model definition
-│   │   ├── user.routes.js     # User route definitions
-│   │   └── user.service.js    # User service layer
-├── app.js                    # Main application entry point
-├── middleware.js             # Custom middleware functions
+│   ├── app.ts                # Main application entry point
+│   ├── middleware.ts         # Custom middleware functions
+│   ├── routes.ts             # Main route definitions
+│   ├── config/               # Configuration files
+│   │   ├── associations.ts   # Associations between models
+│   │   ├── db-init.ts        # Database initialization
+│   │   └── sequelize.ts      # Database configuration
+│   ├── helpers/              # Helper functions
+│   │   └── handleErrorType.ts # Error type handling utilities
+│   ├── modules/              # Feature modules
+│   │   ├── role/             # Role module
+│   │   │   ├── role.controller.ts # Role business logic
+│   │   │   ├── role.model.ts      # Role Sequelize model definition
+│   │   │   ├── role.routes.ts     # Role route definitions
+│   │   │   ├── role.service.ts    # Role service layer
+│   │   │   └── role.validator.ts  # Role validation schemas
+│   │   ├── todo/             # Todo module
+│   │   │   ├── todo.controller.ts # Todo HTTP request handlers
+│   │   │   ├── todo.model.ts      # Todo Sequelize model definition
+│   │   │   ├── todo.routes.ts     # Todo route definitions
+│   │   │   ├── todo.service.ts    # Todo business logic
+│   │   │   └── todo.validator.ts  # Todo validation schemas
+│   │   └── user/             # User module
+│   │       ├── user.controller.ts # User business logic
+│   │       ├── user.model.ts      # User Sequelize model definition
+│   │       ├── user.routes.ts     # User route definitions
+│   │       ├── user.service.ts    # User service layer
+│   │       └── user.validator.ts  # User validation schemas
+│   └── seeders/              # Database seeders
+│       └── role.seeder.ts    # Role data seeder
 ├── package.json              # Dependencies and scripts
-├── .env                      # Environment variables (create this)
-├── .gitignore               # Git ignore rules
-└── README.md                 # This file
+├── package-lock.json         # Lock file for dependencies
+├── tsconfig.json            # TypeScript configuration
+├── tsconfig.tsbuildinfo     # TypeScript build info
+├── .env                     # Environment variables (create this)
+├── .gitignore              # Git ignore rules
+├── API_DOCUMENTATION.md     # API documentation
+├── TODO.md                  # Project tasks and todos
+└── README.md                # This file
 ```
 
 ## 📋 API Endpoints
