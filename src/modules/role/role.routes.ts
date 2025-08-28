@@ -1,5 +1,6 @@
 import express = require("express");
 import roleController from "./role.controller";
+import { validateRole } from "./role.validator";
 
 const router = express.Router();
 
