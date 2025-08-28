@@ -7,14 +7,31 @@ export const validateRole = (
   res: Response,
   next: NextFunction
 ) => {
-  const data: Pick<Role, "name"> = req.body;
+  const data: Partial<Role> = req.body;
   const errors: string[] = [];
+  const method = req.method;
 
-  // Validate title if provided
-  if (data.name !== undefined) {
-    if (typeof data.name !== "string" || data.name.trim().length === 0) {
-      errors.push("Title must be a non-empty string");
+  // For POST requests (create), name is required
+  if (method === "POST") {
+    if (
+      !data.name ||
+      typeof data.name !== "string" ||
+      data.name.trim().length === 0
+    ) {
+      errors.push("Name is required and must be a non-empty string");
     }
+  }
+
+  // For PATCH requests (update), validate name if provided
+  if (method === "PATCH" && data.name !== undefined) {
+    if (typeof data.name !== "string" || data.name.trim().length === 0) {
+      errors.push("Name must be a non-empty string");
+    }
+  }
+
+  // Validate name length
+  if (data.name && data.name.trim().length > 50) {
+    errors.push("Name must be less than 50 characters");
   }
 
   // Check for unknown fields
@@ -34,6 +51,11 @@ export const validateRole = (
 
   if (errors.length > 0) {
     return handleErrorType(400, res, new Error(errors.join("; ")));
+  }
+
+  // Trim whitespace from name
+  if (data.name) {
+    req.body.name = data.name.trim();
   }
 
   next();
