@@ -28,6 +28,14 @@ class UserService {
   }
 
   async createUser(userData: CreateRequestBody) {
+    // Check for existing user with the same email
+    const existingUser = await User.findOne({
+      where: { email: userData.email },
+    });
+    if (existingUser) {
+      throw new Error("Email already in use");
+    }
+
     try {
       const saltRounds = 12;
       const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
@@ -71,6 +79,16 @@ class UserService {
       const user = await User.findByPk(id);
       if (!user) {
         throw new Error("User not found");
+      }
+
+      // Check for existing user with the same email if it's being updated
+      if (userData.email) {
+        const existingUser = await User.findOne({
+          where: { email: userData.email },
+        });
+        if (existingUser && existingUser.id !== id) {
+          throw new Error("Email already in use");
+        }
       }
 
       if (userData.password) {
