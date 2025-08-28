@@ -118,15 +118,21 @@ node-express-sequelize-api/
 #### Get All Users
 
 - **Endpoint**: `GET /users/`
-- **Description**: Retrieve all users
+- **Description**: Retrieve all users with their associated roles (password and role_id fields are excluded for security)
 - **Response**:
   ```json
   {
     "data": [
       {
         "id": "uuid",
-        "name": "string",
+        "first_name": "string",
+        "last_name": "string",
         "email": "string",
+        "status": "active|in_active|archived",
+        "role": {
+          "id": "uuid",
+          "name": "string"
+        },
         "createdAt": "timestamp",
         "updatedAt": "timestamp"
       }
@@ -138,49 +144,75 @@ node-express-sequelize-api/
 #### Create User
 
 - **Endpoint**: `POST /users/create`
-- **Description**: Create a new user
+- **Description**: Create a new user with hashed password
 - **Request Body**:
   ```json
   {
-    "name": "Sample User",
-    "email": "user@example.com"
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com",
+    "password": "securepassword123",
+    "role_id": "uuid" // Optional, references a role
   }
   ```
-- **Response**: Returns the created user with success status
+- **Validation**: Email must be unique and valid format
+- **Response**: Returns the created user with success status (password and role_id fields excluded)
 
 #### Get User by ID
 
 - **Endpoint**: `GET /users/:id`
-- **Description**: Retrieve a user by ID
+- **Description**: Retrieve a user by ID with their associated role
 - **Parameters**: `id` (UUID) - The user identifier
-- **Response**: Returns the user details
+- **Response**: Returns the user details with role information
 
 #### Update User
 
 - **Endpoint**: `PATCH /users/update/:id`
-- **Description**: Update an existing user by ID
+- **Description**: Update an existing user by ID (password is automatically hashed if provided)
 - **Parameters**: `id` (UUID) - The user identifier
 - **Request Body**:
   ```json
   {
-    "name": "Updated Name", // Optional
-    "email": "updated@example.com" // Optional
+    "first_name": "Updated First Name", // Optional
+    "last_name": "Updated Last Name", // Optional
+    "email": "updated@example.com", // Optional
+    "password": "newpassword123", // Optional
+    "status": "active|in_active|archived", // Optional
+    "role_id": "uuid" // Optional
   }
   ```
-- **Response**: Returns the updated user
+- **Response**: Returns the updated user with role information
 
 #### Delete User
 
 - **Endpoint**: `DELETE /users/delete/:id`
-- **Description**: Delete a user by ID
+- **Description**: Delete a user by ID (permanent deletion)
 - **Parameters**: `id` (UUID) - The user identifier
 - **Response**: Returns a success message
+
+#### Verify Password
+
+- **Endpoint**: `POST /users/verify-password`
+- **Description**: Verify if the provided password matches the user's stored password
+- **Request Body**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "isMatch": true|false
+  }
+  ```
 
 ### Role Management
 
 #### Get All Roles
 
-- **Endpoint**: `GET /roles/get`
+- **Endpoint**: `GET /roles/`
 - **Description**: Retrieve all roles
 - **Response**:
   ```json
@@ -197,6 +229,13 @@ node-express-sequelize-api/
   }
   ```
 
+#### Get Role by ID
+
+- **Endpoint**: `GET /roles/:id`
+- **Description**: Retrieve a specific role by ID
+- **Parameters**: `id` (UUID) - The role identifier
+- **Response**: Returns the role details
+
 #### Create Role
 
 - **Endpoint**: `POST /roles/create`
@@ -207,6 +246,7 @@ node-express-sequelize-api/
     "name": "Sample Role"
   }
   ```
+- **Validation**: Prevents duplicate role names
 - **Response**: Returns the created role with success status
 
 #### Update Role
@@ -220,7 +260,15 @@ node-express-sequelize-api/
     "name": "Updated Role" // Optional
   }
   ```
+- **Validation**: Prevents duplicate role names
 - **Response**: Returns the updated role
+
+#### Delete Role
+
+- **Endpoint**: `DELETE /roles/delete/:id`
+- **Description**: Delete a role by ID (permanent deletion)
+- **Parameters**: `id` (UUID) - The role identifier
+- **Response**: Returns a success message
 
 ## 🛠️ Installation & Setup
 
