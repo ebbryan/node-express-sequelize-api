@@ -1,4 +1,4 @@
-# Node.js Express TypeScript Sequelize Todo, User, and Role API
+# Node.js Express TypeScript Sequelize API
 
 A robust and scalable RESTful API for managing todo items, users, and roles, built with Node.js, Express.js, TypeScript, Sequelize ORM, and PostgreSQL. This API follows clean architecture principles with separation of concerns and is designed for easy maintenance and future expansion.
 
@@ -69,222 +69,6 @@ node-express-sequelize-api/
 └── README.md                # This file
 ```
 
-## 📋 API Endpoints
-
-### Todo Management
-
-#### Get All Todos
-
-- **Endpoint**: `GET /todos/get`
-- **Description**: Retrieve all active todos (excluding archived items)
-- **Response**:
-  ```json
-  {
-    "data": [
-      {
-        "id": "uuid",
-        "title": "string",
-        "status": "pending|in_progress|completed|archived",
-        "createdAt": "timestamp",
-        "updatedAt": "timestamp"
-      }
-    ],
-    "success": true
-  }
-  ```
-
-#### Create Todo
-
-- **Endpoint**: `POST /todos/create`
-- **Description**: Create a new todo item
-- **Request Body**:
-  ```json
-  {
-    "title": "Sample Todo",
-    "status": "pending" // Optional, defaults to "pending"
-  }
-  ```
-- **Validation**: Prevents duplicate titles
-- **Response**: Returns the created todo with success status
-
-#### Update Todo
-
-- **Endpoint**: `PATCH /todos/update/:id`
-- **Description**: Update an existing todo by ID
-- **Parameters**: `id` (UUID) - The todo identifier
-- **Request Body**:
-  ```json
-  {
-    "title": "Updated Title", // Optional
-    "status": "completed" // Optional
-  }
-  ```
-- **Response**: Returns the updated todo
-
-#### Archive Todo (Soft Delete)
-
-- **Endpoint**: `PATCH /todos/:id/archive`
-- **Description**: Archive a todo (soft delete by setting status to archived)
-- **Parameters**: `id` (UUID) - The todo identifier
-- **Response**: Returns the archived todo
-
-### User Management
-
-#### Get All Users
-
-- **Endpoint**: `GET /users/`
-- **Description**: Retrieve all users with their associated roles (password and role_id fields are excluded for security)
-- **Response**:
-  ```json
-  {
-    "data": [
-      {
-        "id": "uuid",
-        "first_name": "string",
-        "last_name": "string",
-        "email": "string",
-        "status": "active|in_active|archived",
-        "role": {
-          "id": "uuid",
-          "name": "string"
-        },
-        "createdAt": "timestamp",
-        "updatedAt": "timestamp"
-      }
-    ],
-    "success": true
-  }
-  ```
-
-#### Create User
-
-- **Endpoint**: `POST /users/create`
-- **Description**: Create a new user with hashed password
-- **Request Body**:
-  ```json
-  {
-    "first_name": "John",
-    "last_name": "Doe",
-    "email": "john.doe@example.com",
-    "password": "securepassword123",
-    "role_id": "uuid" // Optional, references a role
-  }
-  ```
-- **Validation**: Email must be unique and valid format
-- **Response**: Returns the created user with success status (password and role_id fields excluded)
-
-#### Get User by ID
-
-- **Endpoint**: `GET /users/:id`
-- **Description**: Retrieve a user by ID with their associated role
-- **Parameters**: `id` (UUID) - The user identifier
-- **Response**: Returns the user details with role information
-
-#### Update User
-
-- **Endpoint**: `PATCH /users/update/:id`
-- **Description**: Update an existing user by ID (password is automatically hashed if provided)
-- **Parameters**: `id` (UUID) - The user identifier
-- **Request Body**:
-  ```json
-  {
-    "first_name": "Updated First Name", // Optional
-    "last_name": "Updated Last Name", // Optional
-    "email": "updated@example.com", // Optional
-    "password": "newpassword123", // Optional
-    "status": "active|in_active|archived", // Optional
-    "role_id": "uuid" // Optional
-  }
-  ```
-- **Response**: Returns the updated user with role information
-
-#### Delete User
-
-- **Endpoint**: `DELETE /users/delete/:id`
-- **Description**: Delete a user by ID (permanent deletion)
-- **Parameters**: `id` (UUID) - The user identifier
-- **Response**: Returns a success message
-
-#### Verify Password
-
-- **Endpoint**: `POST /users/verify-password`
-- **Description**: Verify if the provided password matches the user's stored password
-- **Request Body**:
-  ```json
-  {
-    "email": "user@example.com",
-    "password": "password123"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "isMatch": true|false
-  }
-  ```
-
-### Role Management
-
-#### Get All Roles
-
-- **Endpoint**: `GET /roles/`
-- **Description**: Retrieve all roles
-- **Response**:
-  ```json
-  {
-    "data": [
-      {
-        "id": "uuid",
-        "name": "string",
-        "createdAt": "timestamp",
-        "updatedAt": "timestamp"
-      }
-    ],
-    "success": true
-  }
-  ```
-
-#### Get Role by ID
-
-- **Endpoint**: `GET /roles/:id`
-- **Description**: Retrieve a specific role by ID
-- **Parameters**: `id` (UUID) - The role identifier
-- **Response**: Returns the role details
-
-#### Create Role
-
-- **Endpoint**: `POST /roles/create`
-- **Description**: Create a new role
-- **Request Body**:
-  ```json
-  {
-    "name": "Sample Role"
-  }
-  ```
-- **Validation**: Prevents duplicate role names
-- **Response**: Returns the created role with success status
-
-#### Update Role
-
-- **Endpoint**: `PATCH /roles/update/:id`
-- **Description**: Update an existing role by ID
-- **Parameters**: `id` (UUID) - The role identifier
-- **Request Body**:
-  ```json
-  {
-    "name": "Updated Role" // Optional
-  }
-  ```
-- **Validation**: Prevents duplicate role names
-- **Response**: Returns the updated role
-
-#### Delete Role
-
-- **Endpoint**: `DELETE /roles/delete/:id`
-- **Description**: Delete a role by ID (permanent deletion)
-- **Parameters**: `id` (UUID) - The role identifier
-- **Response**: Returns a success message
-
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
@@ -338,57 +122,6 @@ node-express-sequelize-api/
    npm start
    ```
 
-## 🧪 Testing the API
-
-You can test the API using tools like curl, Postman, or Thunder Client:
-
-```bash
-# Get all todos
-curl http://localhost:3000/todos/get
-
-# Create a new todo
-curl -X POST http://localhost:3000/todos/create \
-  -H "Content-Type: application/json" \
-  -d '{"title": "Learn Node.js", "status": "pending"}'
-
-# Update a todo
-curl -X PATCH http://localhost:3000/todos/update/123e4567-e89b-12d3-a456-426614174000 \
-  -H "Content-Type: application/json" \
-  -d '{"status": "completed"}'
-
-# Archive a todo
-curl -X PATCH http://localhost:3000/todos/123e4567-e89b-12d3-a456-426614174000/archive
-
-# Get all users
-curl http://localhost:3000/users/
-
-# Create a new user
-curl -X POST http://localhost:3000/users/create \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Sample User", "email": "user@example.com"}'
-
-# Update a user
-curl -X PATCH http://localhost:3000/users/update/123e4567-e89b-12d3-a456-426614174000 \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Updated User"}'
-
-# Delete a user
-curl -X DELETE http://localhost:3000/users/delete/123e4567-e89b-12d3-a456-426614174000
-
-# Get all roles
-curl http://localhost:3000/roles/get
-
-# Create a new role
-curl -X POST http://localhost:3000/roles/create \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Sample Role"}'
-
-# Update a role
-curl -X PATCH http://localhost:3000/roles/update/123e4567-e89b-12d3-a456-426614174000 \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Updated Role"}'
-```
-
 ## 🔧 Development
 
 ### Available Scripts
@@ -432,19 +165,6 @@ This project follows these architectural patterns:
    npm start
    ```
 
-### Docker Deployment (Future Ready)
-
-```dockerfile
-# Example Dockerfile for future implementation
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install --only=production
-COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
 ## 📈 Scalability Considerations
 
 ### Current Architecture Benefits
@@ -456,15 +176,14 @@ CMD ["npm", "start"]
 ### Future Enhancements
 
 1. **Authentication**: JWT-based authentication system
-2. **User-Role Associations**: Link users to specific roles
-3. **Pagination**: Add pagination for large datasets
-4. **Search & Filter**: Advanced filtering and search capabilities
-5. **WebSocket Support**: Real-time updates
-6. **Testing Suite**: Unit and integration tests
-7. **API Documentation**: Swagger/OpenAPI documentation
-8. **Rate Limiting**: Request rate limiting
-9. **Logging**: Enhanced logging with Winston/Morgan
-10. **Monitoring**: Health checks and performance monitoring
+2. **Pagination**: Add pagination for large datasets
+3. **Search & Filter**: Advanced filtering and search capabilities
+4. **WebSocket Support**: Real-time updates
+5. **Testing Suite**: Unit and integration tests
+6. **API Documentation**: Swagger/OpenAPI documentation
+7. **Rate Limiting**: Request rate limiting
+8. **Logging**: Enhanced logging with Winston/Morgan
+9. **Monitoring**: Health checks and performance monitoring
 
 ## 🤝 Contributing
 
@@ -512,4 +231,4 @@ If you encounter any issues or have questions:
 
 ---
 
-**Built with ❤️ using Node.js, Express, and Sequelize**
+**Built with ❤️ using Node.js, Express, TypeScript and Sequelize**
