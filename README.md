@@ -1,6 +1,6 @@
-# Node.js Express Sequelize Todo, User, and Role API
+# Node.js Express TypeScript Sequelize Todo, User, and Role API
 
-A robust and scalable RESTful API for managing todo items, users, and roles, built with Node.js, Express.js, Sequelize ORM, and PostgreSQL. This API follows clean architecture principles with separation of concerns and is designed for easy maintenance and future expansion.
+A robust and scalable RESTful API for managing todo items, users, and roles, built with Node.js, Express.js, TypeScript, Sequelize ORM, and PostgreSQL. This API follows clean architecture principles with separation of concerns and is designed for easy maintenance and future expansion.
 
 ## 🚀 Features
 
@@ -16,6 +16,7 @@ A robust and scalable RESTful API for managing todo items, users, and roles, bui
 ## 📦 Tech Stack
 
 - **Runtime**: Node.js
+- **Language**: TypeScript
 - **Framework**: Express.js
 - **ORM**: Sequelize
 - **Database**: PostgreSQL
@@ -26,32 +27,46 @@ A robust and scalable RESTful API for managing todo items, users, and roles, bui
 
 ```
 node-express-sequelize-api/
-├── config/
-│   ├── associations.js       # Associations between models
-│   ├── db-init.js            # Database initialization
-│   └── sequelize.js          # Database configuration
 ├── src/
-│   ├── role/                 # Role module
-│   │   ├── role.controller.js # Role business logic
-│   │   ├── role.model.js      # Role Sequelize model definition
-│   │   ├── role.routes.js     # Role route definitions
-│   │   └── role.service.js    # Role service layer
-│   ├── todo/                 # Todo module
-│   │   ├── todo.model.js     # Todo Sequelize model definition
-│   │   ├── todo.service.js   # Todo business logic
-│   │   ├── todo.controller.js # Todo HTTP request handlers
-│   │   └── todo.routes.js    # Todo route definitions
-│   ├── user/                 # User module
-│   │   ├── user.controller.js # User business logic
-│   │   ├── user.models.js     # User Sequelize model definition
-│   │   ├── user.routes.js     # User route definitions
-│   │   └── user.service.js    # User service layer
-├── app.js                    # Main application entry point
-├── middleware.js             # Custom middleware functions
+│   ├── app.ts                # Main application entry point
+│   ├── middleware.ts         # Custom middleware functions
+│   ├── routes.ts             # Main route definitions
+│   ├── config/               # Configuration files
+│   │   ├── associations.ts   # Associations between models
+│   │   ├── db-init.ts        # Database initialization
+│   │   └── sequelize.ts      # Database configuration
+│   ├── helpers/              # Helper functions
+│   │   └── handleErrorType.ts # Error type handling utilities
+│   ├── modules/              # Feature modules
+│   │   ├── role/             # Role module
+│   │   │   ├── role.controller.ts # Role business logic
+│   │   │   ├── role.model.ts      # Role Sequelize model definition
+│   │   │   ├── role.routes.ts     # Role route definitions
+│   │   │   ├── role.service.ts    # Role service layer
+│   │   │   └── role.validator.ts  # Role validation schemas
+│   │   ├── todo/             # Todo module
+│   │   │   ├── todo.controller.ts # Todo HTTP request handlers
+│   │   │   ├── todo.model.ts      # Todo Sequelize model definition
+│   │   │   ├── todo.routes.ts     # Todo route definitions
+│   │   │   ├── todo.service.ts    # Todo business logic
+│   │   │   └── todo.validator.ts  # Todo validation schemas
+│   │   └── user/             # User module
+│   │       ├── user.controller.ts # User business logic
+│   │       ├── user.model.ts      # User Sequelize model definition
+│   │       ├── user.routes.ts     # User route definitions
+│   │       ├── user.service.ts    # User service layer
+│   │       └── user.validator.ts  # User validation schemas
+│   └── seeders/              # Database seeders
+│       └── role.seeder.ts    # Role data seeder
 ├── package.json              # Dependencies and scripts
-├── .env                      # Environment variables (create this)
-├── .gitignore               # Git ignore rules
-└── README.md                 # This file
+├── package-lock.json         # Lock file for dependencies
+├── tsconfig.json            # TypeScript configuration
+├── tsconfig.tsbuildinfo     # TypeScript build info
+├── .env                     # Environment variables (create this)
+├── .gitignore              # Git ignore rules
+├── API_DOCUMENTATION.md     # API documentation
+├── TODO.md                  # Project tasks and todos
+└── README.md                # This file
 ```
 
 ## 📋 API Endpoints
@@ -118,15 +133,21 @@ node-express-sequelize-api/
 #### Get All Users
 
 - **Endpoint**: `GET /users/`
-- **Description**: Retrieve all users
+- **Description**: Retrieve all users with their associated roles (password and role_id fields are excluded for security)
 - **Response**:
   ```json
   {
     "data": [
       {
         "id": "uuid",
-        "name": "string",
+        "first_name": "string",
+        "last_name": "string",
         "email": "string",
+        "status": "active|in_active|archived",
+        "role": {
+          "id": "uuid",
+          "name": "string"
+        },
         "createdAt": "timestamp",
         "updatedAt": "timestamp"
       }
@@ -138,49 +159,75 @@ node-express-sequelize-api/
 #### Create User
 
 - **Endpoint**: `POST /users/create`
-- **Description**: Create a new user
+- **Description**: Create a new user with hashed password
 - **Request Body**:
   ```json
   {
-    "name": "Sample User",
-    "email": "user@example.com"
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com",
+    "password": "securepassword123",
+    "role_id": "uuid" // Optional, references a role
   }
   ```
-- **Response**: Returns the created user with success status
+- **Validation**: Email must be unique and valid format
+- **Response**: Returns the created user with success status (password and role_id fields excluded)
 
 #### Get User by ID
 
 - **Endpoint**: `GET /users/:id`
-- **Description**: Retrieve a user by ID
+- **Description**: Retrieve a user by ID with their associated role
 - **Parameters**: `id` (UUID) - The user identifier
-- **Response**: Returns the user details
+- **Response**: Returns the user details with role information
 
 #### Update User
 
 - **Endpoint**: `PATCH /users/update/:id`
-- **Description**: Update an existing user by ID
+- **Description**: Update an existing user by ID (password is automatically hashed if provided)
 - **Parameters**: `id` (UUID) - The user identifier
 - **Request Body**:
   ```json
   {
-    "name": "Updated Name", // Optional
-    "email": "updated@example.com" // Optional
+    "first_name": "Updated First Name", // Optional
+    "last_name": "Updated Last Name", // Optional
+    "email": "updated@example.com", // Optional
+    "password": "newpassword123", // Optional
+    "status": "active|in_active|archived", // Optional
+    "role_id": "uuid" // Optional
   }
   ```
-- **Response**: Returns the updated user
+- **Response**: Returns the updated user with role information
 
 #### Delete User
 
 - **Endpoint**: `DELETE /users/delete/:id`
-- **Description**: Delete a user by ID
+- **Description**: Delete a user by ID (permanent deletion)
 - **Parameters**: `id` (UUID) - The user identifier
 - **Response**: Returns a success message
+
+#### Verify Password
+
+- **Endpoint**: `POST /users/verify-password`
+- **Description**: Verify if the provided password matches the user's stored password
+- **Request Body**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "isMatch": true|false
+  }
+  ```
 
 ### Role Management
 
 #### Get All Roles
 
-- **Endpoint**: `GET /roles/get`
+- **Endpoint**: `GET /roles/`
 - **Description**: Retrieve all roles
 - **Response**:
   ```json
@@ -197,6 +244,13 @@ node-express-sequelize-api/
   }
   ```
 
+#### Get Role by ID
+
+- **Endpoint**: `GET /roles/:id`
+- **Description**: Retrieve a specific role by ID
+- **Parameters**: `id` (UUID) - The role identifier
+- **Response**: Returns the role details
+
 #### Create Role
 
 - **Endpoint**: `POST /roles/create`
@@ -207,6 +261,7 @@ node-express-sequelize-api/
     "name": "Sample Role"
   }
   ```
+- **Validation**: Prevents duplicate role names
 - **Response**: Returns the created role with success status
 
 #### Update Role
@@ -220,7 +275,15 @@ node-express-sequelize-api/
     "name": "Updated Role" // Optional
   }
   ```
+- **Validation**: Prevents duplicate role names
 - **Response**: Returns the updated role
+
+#### Delete Role
+
+- **Endpoint**: `DELETE /roles/delete/:id`
+- **Description**: Delete a role by ID (permanent deletion)
+- **Parameters**: `id` (UUID) - The role identifier
+- **Response**: Returns a success message
 
 ## 🛠️ Installation & Setup
 

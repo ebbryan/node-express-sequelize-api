@@ -1,7 +1,8 @@
-const sequelize = require("./sequelize.js");
-const { defineAssociations } = require("./associations.js");
+import { sequelize } from "./sequelize";
+import { defineAssociations } from "./associations";
+import { Express } from "express";
 
-function DBInit(app) {
+const DBInit = (app: Express) => {
   sequelize
     .authenticate()
     .then(() => {
@@ -14,9 +15,9 @@ function DBInit(app) {
         console.log(`Server is running on port ${process.env.SERVER_PORT}`);
       });
     })
-    .catch((err) => {
+    .catch((err: Error) => {
       console.error("Unable to connect to the database:", err);
     });
-}
+};
 
-module.exports = { DBInit };
+export default DBInit;

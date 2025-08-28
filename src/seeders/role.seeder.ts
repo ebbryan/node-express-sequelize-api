@@ -1,7 +1,7 @@
-const { v4: uuidv4 } = require("uuid");
+import { sequelize } from "../config/sequelize";
 
-const sequelize = require("../../config/sequelize.js");
-const { Role } = require("../role/role.model.js");
+import { v4 as uuidv4 } from "uuid";
+import { Role } from "../modules/role/role.model";
 
 async function seedRoles() {
   try {
